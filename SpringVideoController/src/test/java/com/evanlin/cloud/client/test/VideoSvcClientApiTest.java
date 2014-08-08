@@ -36,7 +36,7 @@ import retrofit.RestAdapter.LogLevel;
  */
 public class VideoSvcClientApiTest {
 
-	private final String TEST_URL = "http://localhost:8080";
+	private final String TEST_URL = "http://localhost:9000";
 
 	/**
 	 * This is how we turn the VideoSvcApi into an object that
