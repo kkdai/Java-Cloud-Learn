@@ -2,6 +2,8 @@ package com.evanlin.cloud.client.test;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -63,7 +65,14 @@ public class VideoSvcClientApiTest {
 		String title = "Programming Cloud Services for Android Handheld Systems";
 		String url = "http://coursera.org/some/video";
 		long duration = 60 * 10 * 1000; // 10min in milliseconds
-		Video video = new Video(title, url, duration);
+		
+		//目前時間
+		Date date = new Date();
+		//設定日期格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String current_date = sdf.format(date);
+		
+		Video video = new Video(title, url, duration, current_date);
 		
 		// Send the POST request to the VideoServlet using Retrofit to add the video.
 		// Notice how Retrofit provides a nice strongly-typed interface to our

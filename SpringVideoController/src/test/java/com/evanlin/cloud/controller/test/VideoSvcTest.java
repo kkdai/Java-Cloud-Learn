@@ -2,6 +2,8 @@ package com.evanlin.cloud.controller.test;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -45,7 +47,12 @@ public class VideoSvcTest {
 		String title = "Programming Cloud Services for Android Handheld Systems";
 		String url = "http://coursera.org/some/video";
 		long duration = 60 * 10 * 1000; // 10min in milliseconds
-		Video video = new Video(title, url, duration);
+
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String current_date = sdf.format(date);
+
+		Video video = new Video(title, url, duration, current_date);
 
 		// Test the servlet directly, without going through the network.
 		boolean ok = videoService.addVideo(video);

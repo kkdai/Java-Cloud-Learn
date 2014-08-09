@@ -13,13 +13,15 @@ public class Video {
 	private String name;
 	private String url;
 	private long duration;
+	private String upload_date;
 
 	public Video(){}
 	
-	public Video(String name, String url, long duration) {
+	public Video(String name, String url, long duration, String upload_date) {
 		this.name = name;
 		this.url = url;
 		this.duration = duration;
+		this.upload_date = upload_date;
 	}
 
 	public String getName() {
@@ -46,20 +48,28 @@ public class Video {
 		this.duration = duration;
 	}
 
+	public String getUpload_date() {
+		return upload_date;
+	}
+
+	public void setUpload_date(String upload_date) {
+		this.upload_date = upload_date;
+	}
+	
 	/**
 	 * Two Videos will generate the same hashcode if they have exactly
-	 * the same values for their name, url, and duration.
+	 * the same values for their name, url, upload_date and duration.
 	 * 
 	 */
 	@Override
 	public int hashCode() {
 		// Google Guava provides great utilities for hashing 
-		return Objects.hashCode(name,url,duration);
+		return Objects.hashCode(name,url,duration, upload_date);
 	}
 
 	/**
 	 * Two Videos are considered equal if they have exactly
-	 * the same values for their name, url, and duration.
+	 * the same values for their name, url, upload_date, and duration.
 	 * 
 	 */
 	@Override
@@ -69,7 +79,8 @@ public class Video {
 			// Google Guava provides great utilities for equals too! 
 			return Objects.equal(name, other.name) 
 					&& Objects.equal(url, other.url)
-					&& duration == other.duration;
+					&& duration == other.duration
+					&& Objects.equal(upload_date, other.upload_date);
 		}
 		else {
 			return false;
