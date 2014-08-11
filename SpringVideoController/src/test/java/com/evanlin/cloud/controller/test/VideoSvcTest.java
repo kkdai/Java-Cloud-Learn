@@ -34,13 +34,6 @@ public class VideoSvcTest {
 	
 	private VideoSvc videoService = new VideoSvc();
 
-	/**
-	 * This test creates a Video, adds the Video to the VideoSvc, and then
-	 * checks that the Video is included in the list when getVideoList() is
-	 * called.
-	 * 
-	 * @throws Exception
-	 */
 	@Test
 	public void testVideoAddAndList() throws Exception {
 		// Information about the video

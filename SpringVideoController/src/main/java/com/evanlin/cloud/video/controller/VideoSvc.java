@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +44,7 @@ public class VideoSvc implements VideoSvcApi {
 
 
 	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET)
-	public @ResponseBody Video getVideoDataByID(@RequestBody long id) {
+	public @ResponseBody Video getVideoDataByID(@PathVariable long id) {
 		for(Video v : videos){
 			if (v.getId() == id)
 				return v;

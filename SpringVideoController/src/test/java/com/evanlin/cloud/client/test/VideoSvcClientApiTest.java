@@ -53,9 +53,7 @@ public class VideoSvcClientApiTest {
 		String url = "http://coursera.org/some/video";
 		long duration = 60 * 10 * 1000; // 10min in milliseconds
 		
-		//目前時間
 		Date date = new Date();
-		//設定日期格式
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String current_date = sdf.format(date);
 		
@@ -67,11 +65,11 @@ public class VideoSvcClientApiTest {
 		boolean ok = videoService.addVideo(video);
 		assertTrue(ok);
 		List<Video> videos2 = videoService.getVideoList();
-
 		assertTrue(videos2.contains(video));
 		
+		// Testing insert and get by ID.
 		Video video2 = videoService.getVideoDataByID(currentID);
-		assertTrue(video == video2);
+		assertTrue(video.getId() == video2.getId());
 	}
 
 }
