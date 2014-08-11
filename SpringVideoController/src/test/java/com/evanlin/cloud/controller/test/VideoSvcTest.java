@@ -52,7 +52,7 @@ public class VideoSvcTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String current_date = sdf.format(date);
 
-		Video video = new Video(title, url, duration, current_date);
+		Video video = new Video(0, title, url, duration, current_date);
 
 		// Test the servlet directly, without going through the network.
 		boolean ok = videoService.addVideo(video);
@@ -60,6 +60,9 @@ public class VideoSvcTest {
 		
 		List<Video> videos = videoService.getVideoList();
 		assertTrue(videos.contains(video));
+		
+		Video video2 = videoService.getVideoDataByID(1);
+		assertTrue(video == video2);
 	}
 
 }

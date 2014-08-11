@@ -40,25 +40,12 @@ public class VideoSvcClientApiTest {
 
 	private final String TEST_URL = "http://localhost:9000";
 
-	/**
-	 * This is how we turn the VideoSvcApi into an object that
-	 * will translate method calls on the VideoSvcApi's interface
-	 * methods into HTTP requests on the server. Parameters / return
-	 * values are being marshalled to/from JSON.
-	 */
 	private VideoSvcApi videoService = new RestAdapter.Builder()
 			.setEndpoint(TEST_URL)
 			.setLogLevel(LogLevel.FULL)
 			.build()
 			.create(VideoSvcApi.class);
 
-	/**
-	 * This test sends a POST request to the VideoServlet to add a new video and
-	 * then sends a second GET request to check that the video showed up in the
-	 * list of videos.
-	 * 
-	 * @throws Exception
-	 */
 	@Test
 	public void testVideoAddAndList() throws Exception {
 		// Information about the video
@@ -72,17 +59,19 @@ public class VideoSvcClientApiTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String current_date = sdf.format(date);
 		
-		Video video = new Video(title, url, duration, current_date);
-		
-		// Send the POST request to the VideoServlet using Retrofit to add the video.
-		// Notice how Retrofit provides a nice strongly-typed interface to our
-		// HTTP-accessible video service that is much cleaner than muddling around
-		// with URL query parameters, etc.
+		Video video = new Video(0, title, url, duration, current_date);
+		List<Video> videos = videoService.getVideoList();
+		long currentID = videos.size()+1;
+		video.setId(currentID);
+
 		boolean ok = videoService.addVideo(video);
 		assertTrue(ok);
+		List<Video> videos2 = videoService.getVideoList();
+
+		assertTrue(videos2.contains(video));
 		
-		List<Video> videos = videoService.getVideoList();
-		assertTrue(videos.contains(video));
+		Video video2 = videoService.getVideoDataByID(currentID);
+		assertTrue(video == video2);
 	}
 
 }

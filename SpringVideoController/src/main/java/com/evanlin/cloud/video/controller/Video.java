@@ -9,7 +9,7 @@ import com.google.common.base.Objects;
  * 
  */
 public class Video {
-
+    private long id;
 	private String name;
 	private String url;
 	private long duration;
@@ -17,7 +17,8 @@ public class Video {
 
 	public Video(){}
 	
-	public Video(String name, String url, long duration, String upload_date) {
+	public Video(long id, String name, String url, long duration, String upload_date) {
+		this.id = id;
 		this.name = name;
 		this.url = url;
 		this.duration = duration;
@@ -38,6 +39,14 @@ public class Video {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public long getDuration() {
@@ -64,7 +73,7 @@ public class Video {
 	@Override
 	public int hashCode() {
 		// Google Guava provides great utilities for hashing 
-		return Objects.hashCode(name,url,duration, upload_date);
+		return Objects.hashCode(id, name,url,duration, upload_date);
 	}
 
 	/**
@@ -80,7 +89,8 @@ public class Video {
 			return Objects.equal(name, other.name) 
 					&& Objects.equal(url, other.url)
 					&& duration == other.duration
-					&& Objects.equal(upload_date, other.upload_date);
+					&& Objects.equal(upload_date, other.upload_date)
+					&& id == other.id;
 		}
 		else {
 			return false;
