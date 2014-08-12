@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Path;
 
 import com.evanlin.cloud.video.client.VideoSvcApi;
@@ -42,13 +45,27 @@ public class VideoSvc implements VideoSvcApi {
 		return videos;
 	}
 
-
 	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET)
-	public @ResponseBody Video getVideoDataByID(@PathVariable long id) {
+	public @ResponseBody Video getVideoDataByID(@PathVariable("id") long id) {
 		for(Video v : videos){
 			if (v.getId() == id)
 				return v;
 		}
 		return null;
 	}
+	
+	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST)
+	public @ResponseBody boolean setVideoData(@PathVariable("id") long id, @RequestBody Video videoData) {
+		for(Video v : videos){
+			if (v.getId() == id) {
+				v.setName(videoData.getName());
+				v.setDuration(videoData.getDuration());
+				v.setUrl(videoData.getUrl());
+				v.setUpload_date(videoData.getUpload_date());
+				return true;
+			}				
+		}
+		return false;
+	}
+
 }

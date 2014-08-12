@@ -69,7 +69,28 @@ public class VideoSvcClientApiTest {
 		
 		// Testing insert and get by ID.
 		Video video2 = videoService.getVideoDataByID(currentID);
-		assertTrue(video.getId() == video2.getId());
+		assertTrue(video.getId() == video2.getId());		
 	}
-
+	
+	@Test
+	public void testVideoAddAndList2() throws Exception {
+		String title = "[update]Programming Cloud Services for Android Handheld Systems";
+		String url = "http://coursera.org/some/video";
+		long duration = 30 * 10 * 1000; // 10min in milliseconds
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String current_date = sdf.format(date);		
+		Video video_updated = new Video(1, title, url, duration, current_date);
+	
+		List<Video> videos = videoService.getVideoList();
+		if (videos.size() == 0) {
+			testVideoAddAndList();
+		}
+		
+		//verify updated
+		videoService.setVideoData(1, video_updated);			
+		List<Video> videos_update = videoService.getVideoList();
+		assertTrue(videos_update.contains(video_updated));
+	}
 }

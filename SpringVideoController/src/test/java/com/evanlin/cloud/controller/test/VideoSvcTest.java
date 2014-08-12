@@ -46,16 +46,17 @@ public class VideoSvcTest {
 		String current_date = sdf.format(date);
 
 		Video video = new Video(0, title, url, duration, current_date);
+		List<Video> videos = videoService.getVideoList();
+		long currentID = videos.size()+1;
+		video.setId(currentID);
 
-		// Test the servlet directly, without going through the network.
 		boolean ok = videoService.addVideo(video);
 		assertTrue(ok);
+		List<Video> videos2 = videoService.getVideoList();
+		assertTrue(videos2.contains(video));
 		
-		List<Video> videos = videoService.getVideoList();
-		assertTrue(videos.contains(video));
-		
-		Video video2 = videoService.getVideoDataByID(1);
-		assertTrue(video == video2);
+		// Testing insert and get by ID.
+		Video video2 = videoService.getVideoDataByID(currentID);
+		assertTrue(video.getId() == video2.getId());
 	}
-
 }

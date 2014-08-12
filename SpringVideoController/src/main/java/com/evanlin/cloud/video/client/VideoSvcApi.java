@@ -6,7 +6,9 @@ import com.evanlin.cloud.video.controller.Video;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Path;
 
 public interface VideoSvcApi {
@@ -25,4 +27,7 @@ public interface VideoSvcApi {
 
 	@GET(VIDEO_DATA_PATH)
 	public Video getVideoDataByID(@Path(ID_PARAMETER) long id);
+
+	@POST(VIDEO_DATA_PATH)
+	public boolean setVideoData(@Path(ID_PARAMETER) long id, @Body Video videoData);
 }
