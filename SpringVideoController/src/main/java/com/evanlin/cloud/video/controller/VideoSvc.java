@@ -1,33 +1,26 @@
 package com.evanlin.cloud.video.controller;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.Part;
-import retrofit.http.Path;
-
-import com.evanlin.cloud.video.client.VideoSvcApi;
 
 // Tell Spring that this class is a Controller that should 
 // handle certain HTTP requests for the DispatcherServlet
 @Controller
-public class VideoSvc implements VideoSvcApi {
-	
+public class VideoSvc {
+
+	public static final String VIDEO_SVC_PATH = "/video";	
+	public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{id}/data";
+	public static final String DATA_PARAMETER = "data";
+	public static final String ID_PARAMETER = "id";	
+
 	// An in-memory list that the servlet uses to store the
 	// videos that are sent to it by clients
 	private List<Video> videos = new CopyOnWriteArrayList<Video>();
