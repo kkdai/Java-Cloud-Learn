@@ -2,9 +2,13 @@ package com.evanlin.cloud.video;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.evanlin.cloud.video.videoDB.NoDuplicateVideoDB;
+import com.evanlin.cloud.video.videoDB.videoDB;
 
 // Tell Spring that this object represents a Configuration for the
 // application
@@ -25,6 +29,11 @@ public class Application {
 	// Tell Spring to launch our app!
 	public static void main(String[] args){
 		SpringApplication.run(Application.class, args);
+	}
+	
+	@Bean
+	public videoDB VideoDB(){
+		return new NoDuplicateVideoDB();
 	}
 	
 }

@@ -3,8 +3,8 @@ package com.evanlin.cloud.client.test;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -58,13 +58,13 @@ public class VideoSvcClientApiTest {
 		String current_date = sdf.format(date);
 		
 		Video video = new Video(0, title, url, duration, current_date);
-		List<Video> videos = videoService.getVideoList();
+		Collection<Video> videos = videoService.getVideoList();
 		long currentID = videos.size()+1;
 		video.setId(currentID);
 
 		boolean ok = videoService.addVideo(video);
 		assertTrue(ok);
-		List<Video> videos2 = videoService.getVideoList();
+		Collection<Video> videos2 = videoService.getVideoList();
 		assertTrue(videos2.contains(video));
 		
 		// Testing insert and get by ID.
@@ -83,14 +83,14 @@ public class VideoSvcClientApiTest {
 		String current_date = sdf.format(date);		
 		Video video_updated = new Video(1, title, url, duration, current_date);
 	
-		List<Video> videos = videoService.getVideoList();
+		Collection<Video> videos = videoService.getVideoList();
 		if (videos.size() == 0) {
 			testVideoAddAndList();
 		}
 		
 		//verify updated
 		videoService.setVideoData(1, video_updated);			
-		List<Video> videos_update = videoService.getVideoList();
+		Collection<Video> videos_update = videoService.getVideoList();
 		assertTrue(videos_update.contains(video_updated));
 	}
 }

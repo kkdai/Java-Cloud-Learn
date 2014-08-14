@@ -1,15 +1,17 @@
 package com.evanlin.cloud.video.controller;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.evanlin.cloud.video.videoDB.videoDB;
 
 // Tell Spring that this class is a Controller that should 
 // handle certain HTTP requests for the DispatcherServlet
@@ -21,26 +23,25 @@ public class VideoSvc {
 	public static final String DATA_PARAMETER = "data";
 	public static final String ID_PARAMETER = "id";	
 
-	// An in-memory list that the servlet uses to store the
-	// videos that are sent to it by clients
-	private List<Video> videos = new CopyOnWriteArrayList<Video>();
+	@Autowired
+	private videoDB videos;
 	private static final AtomicLong currentId = new AtomicLong(1L);
 
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.POST)
 	public @ResponseBody boolean addVideo(@RequestBody Video v){
 		long id =  currentId.getAndIncrement();
 		v.setId(id);
-		return videos.add(v);
+		return videos.addVideo(v);
 	}
 	
 	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
-	public @ResponseBody List<Video> getVideoList(){
-		return videos;
+	public @ResponseBody Collection<Video> getVideoList(){
+		return videos.getVideos();
 	}
 
 	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET)
 	public @ResponseBody Video getVideoDataByID(@PathVariable("id") long id) {
-		for(Video v : videos){
+		for(Video v : videos.getVideos()){
 			if (v.getId() == id)
 				return v;
 		}
@@ -49,7 +50,7 @@ public class VideoSvc {
 	
 	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST)
 	public @ResponseBody boolean setVideoData(@PathVariable("id") long id, @RequestBody Video videoData) {
-		for(Video v : videos){
+		for(Video v : videos.getVideos()){
 			if (v.getId() == id) {
 				v.setName(videoData.getName());
 				v.setDuration(videoData.getDuration());
