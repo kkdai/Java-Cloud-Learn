@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.evanlin.cloud.video.videoDB.videoDB;
@@ -20,8 +21,10 @@ public class VideoSvc {
 
 	public static final String VIDEO_SVC_PATH = "/video";	
 	public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{id}/data";
+	public static final String VIDEO_SEARCH_PATH = VIDEO_SVC_PATH + "/find";
 	public static final String DATA_PARAMETER = "data";
 	public static final String ID_PARAMETER = "id";	
+	public static final String NAME_PARAMETER = "name";
 
 	@Autowired
 	private videoDB videos;
@@ -61,5 +64,9 @@ public class VideoSvc {
 		}
 		return false;
 	}
-
+	
+	@RequestMapping(value=VIDEO_SEARCH_PATH, method=RequestMethod.GET)
+	public @ResponseBody Collection<Video> findByName(@RequestParam(NAME_PARAMETER) String name){
+		return videos.findByNamee(name);
+	}
 }

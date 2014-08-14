@@ -2,9 +2,7 @@ package com.evanlin.cloud.client.test;
 
 import static org.junit.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 import org.junit.Test;
 
@@ -48,16 +46,8 @@ public class VideoSvcClientApiTest {
 
 	@Test
 	public void testVideoAddAndList() throws Exception {
-		// Information about the video
-		String title = "Programming Cloud Services for Android Handheld Systems";
-		String url = "http://coursera.org/some/video";
-		long duration = 60 * 10 * 1000; // 10min in milliseconds
+		Video video = TestData.randomVideo();
 		
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String current_date = sdf.format(date);
-		
-		Video video = new Video(0, title, url, duration, current_date);
 		Collection<Video> videos = videoService.getVideoList();
 		long currentID = videos.size()+1;
 		video.setId(currentID);
@@ -74,23 +64,23 @@ public class VideoSvcClientApiTest {
 	
 	@Test
 	public void testVideoAddAndList2() throws Exception {
-		String title = "[update]Programming Cloud Services for Android Handheld Systems";
-		String url = "http://coursera.org/some/video";
-		long duration = 30 * 10 * 1000; // 10min in milliseconds
-		
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String current_date = sdf.format(date);		
-		Video video_updated = new Video(1, title, url, duration, current_date);
+		Video video_updated = TestData.randomVideo();
 	
 		Collection<Video> videos = videoService.getVideoList();
 		if (videos.size() == 0) {
 			testVideoAddAndList();
 		}
 		
-		//verify updated
-		videoService.setVideoData(1, video_updated);			
+		//verify updated latest one item
+		Collection<Video> videos2 = videoService.getVideoList();
+		long currentID = videos2.size();
+		video_updated.setId(currentID);
+		videoService.setVideoData(currentID, video_updated);			
 		Collection<Video> videos_update = videoService.getVideoList();
 		assertTrue(videos_update.contains(video_updated));
+	}
+
+	@Test
+	public void testSearchVideoByTitle() throws Exception {
 	}
 }
