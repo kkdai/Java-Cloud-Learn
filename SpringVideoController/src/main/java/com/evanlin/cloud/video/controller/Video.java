@@ -1,14 +1,16 @@
 package com.evanlin.cloud.video.controller;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import com.google.common.base.Objects;
 
-/**
- * A simple object to represent a video and its URL for viewing.
- * 
- * @author jules
- * 
- */
+@Entity
 public class Video {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 	private String name;
 	private String url;
@@ -17,8 +19,7 @@ public class Video {
 
 	public Video(){}
 	
-	public Video(long id, String name, String url, long duration, String upload_date) {
-		this.id = id;
+	public Video(String name, String url, long duration, String upload_date) {
 		this.name = name;
 		this.url = url;
 		this.duration = duration;
@@ -73,7 +74,7 @@ public class Video {
 	@Override
 	public int hashCode() {
 		// Google Guava provides great utilities for hashing 
-		return Objects.hashCode(id, name,url,duration, upload_date);
+		return Objects.hashCode(name,url,duration, upload_date);
 	}
 
 	/**
@@ -89,8 +90,7 @@ public class Video {
 			return Objects.equal(name, other.name) 
 					&& Objects.equal(url, other.url)
 					&& duration == other.duration
-					&& Objects.equal(upload_date, other.upload_date)
-					&& id == other.id;
+					&& Objects.equal(upload_date, other.upload_date);
 		}
 		else {
 			return false;

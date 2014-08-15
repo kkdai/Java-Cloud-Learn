@@ -47,19 +47,14 @@ public class VideoSvcClientApiTest {
 	@Test
 	public void testVideoAddAndList() throws Exception {
 		Video video = TestData.randomVideo();
-		
-		Collection<Video> videos = videoService.getVideoList();
-		long currentID = videos.size()+1;
-		video.setId(currentID);
-
 		boolean ok = videoService.addVideo(video);
 		assertTrue(ok);
-		Collection<Video> videos2 = videoService.getVideoList();
-		assertTrue(videos2.contains(video));
+		Collection<Video> videos = videoService.getVideoList();
+		assertTrue(videos.contains(video));
 		
 		// Testing insert and get by ID.
-		Video video2 = videoService.getVideoDataByID(currentID);
-		assertTrue(video.getId() == video2.getId());		
+		Video videoLast = videoService.getVideoDataByID(videos.size());
+		assertTrue(videos.contains(videoLast));		
 	}
 	
 	@Test
@@ -82,5 +77,10 @@ public class VideoSvcClientApiTest {
 
 	@Test
 	public void testSearchVideoByTitle() throws Exception {
+		Video video = TestData.randomVideo();		
+		boolean ok = videoService.addVideo(video);
+		assertTrue(ok);
+		Collection<Video> nameMatchedVideos = videoService.findByName(video.getName());
+		assertTrue(nameMatchedVideos.contains(video));
 	}
 }

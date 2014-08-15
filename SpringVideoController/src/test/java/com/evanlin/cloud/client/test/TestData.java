@@ -18,7 +18,7 @@ public class TestData {
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String current_date = sdf.format(date);
-		return new Video(0, title, url, duration, current_date);
+		return new Video(title, url, duration, current_date);
 	}
 	
 	public static String toJson(Object o) throws Exception{
