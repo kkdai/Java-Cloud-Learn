@@ -19,7 +19,10 @@ public interface VideoSvcApi {
 	public static final String VIDEO_SEARCH_PATH = VIDEO_SVC_PATH + "/find";
 	public static final String DATA_PARAMETER = "data";
 	public static final String ID_PARAMETER = "id";	
-	public static final String NAME_PARAMETER = "name";
+	public static final String TITLE_PARAMETER = "title";
+	// The path to search videos by title
+	public static final String VIDEO_TITLE_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findByName";
+	public static final String VIDEO_ID_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findById";
 
 	@GET(VIDEO_SVC_PATH)
 	public Collection<Video> getVideoList();
@@ -27,13 +30,12 @@ public interface VideoSvcApi {
 	@POST(VIDEO_SVC_PATH)
 	public Void addVideo(@Body Video v);
 
-	@GET(VIDEO_DATA_PATH)
-	public Video getVideoDataByID(@Path(ID_PARAMETER) long id);
+	@GET(VIDEO_ID_SEARCH_PATH)
+	public Collection<Video> getVideoDataByID(@Query(ID_PARAMETER) long id);
+
+	@GET(VIDEO_TITLE_SEARCH_PATH)
+	public Collection<Video> findByTitle(@Query(TITLE_PARAMETER) String title);
 
 	@POST(VIDEO_DATA_PATH)
 	public boolean setVideoData(@Path(ID_PARAMETER) long id, @Body Video videoData);
-
-	@GET(VIDEO_SEARCH_PATH)
-	public Collection<Video> findByTitle(@Query(NAME_PARAMETER) String title);
-
 }
