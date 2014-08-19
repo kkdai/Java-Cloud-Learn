@@ -16,8 +16,8 @@ import com.evanlin.cloud.video.videoDB.videoDB;
 
 // Tell Spring that this class is a Controller that should 
 // handle certain HTTP requests for the DispatcherServlet
-@Controller
-public class VideoSvc {
+//@Controller
+/*public class VideoSvc {
 
 	public static final String VIDEO_SVC_PATH = "/video";	
 	public static final String VIDEO_DATA_PATH = VIDEO_SVC_PATH + "/{id}/data";
@@ -26,23 +26,23 @@ public class VideoSvc {
 	public static final String ID_PARAMETER = "id";	
 	public static final String NAME_PARAMETER = "name";
 
-	@Autowired
+	//@Autowired
 	private videoDB videos;
 	private static final AtomicLong currentId = new AtomicLong(1L);
 
-	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.POST)
+	//@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.POST)
 	public @ResponseBody boolean addVideo(@RequestBody Video v){
 		long id =  currentId.getAndIncrement();
 		v.setId(id);
 		return videos.addVideo(v);
 	}
 	
-	@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
+	//@RequestMapping(value=VIDEO_SVC_PATH, method=RequestMethod.GET)
 	public @ResponseBody Collection<Video> getVideoList(){
 		return videos.getVideos();
 	}
 
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET)
+	//@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.GET)
 	public @ResponseBody Video getVideoDataByID(@PathVariable("id") long id) {
 		for(Video v : videos.getVideos()){
 			if (v.getId() == id)
@@ -51,7 +51,7 @@ public class VideoSvc {
 		return null;
 	}
 	
-	@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST)
+	//@RequestMapping(value=VIDEO_DATA_PATH, method=RequestMethod.POST)
 	public @ResponseBody boolean setVideoData(@PathVariable("id") long id, @RequestBody Video videoData) {
 		for(Video v : videos.getVideos()){
 			if (v.getId() == id) {
@@ -65,8 +65,8 @@ public class VideoSvc {
 		return false;
 	}
 	
-	@RequestMapping(value=VIDEO_SEARCH_PATH, method=RequestMethod.GET)
+	//@RequestMapping(value=VIDEO_SEARCH_PATH, method=RequestMethod.GET)
 	public @ResponseBody Collection<Video> findByName(@RequestParam(NAME_PARAMETER) String name){
 		return videos.findByNamee(name);
 	}
-}
+} */

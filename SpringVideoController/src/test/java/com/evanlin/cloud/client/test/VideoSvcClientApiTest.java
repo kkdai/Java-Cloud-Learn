@@ -47,8 +47,7 @@ public class VideoSvcClientApiTest {
 	@Test
 	public void testVideoAddAndList() throws Exception {
 		Video video = TestData.randomVideo();
-		boolean ok = videoService.addVideo(video);
-		assertTrue(ok);
+		videoService.addVideo(video);
 		Collection<Video> videos = videoService.getVideoList();
 		assertTrue(videos.contains(video));
 		
@@ -78,9 +77,8 @@ public class VideoSvcClientApiTest {
 	@Test
 	public void testSearchVideoByTitle() throws Exception {
 		Video video = TestData.randomVideo();		
-		boolean ok = videoService.addVideo(video);
-		assertTrue(ok);
-		Collection<Video> nameMatchedVideos = videoService.findByName(video.getName());
+		videoService.addVideo(video);
+		Collection<Video> nameMatchedVideos = videoService.findByTitle(video.getName());
 		assertTrue(nameMatchedVideos.contains(video));
 	}
 }

@@ -1,5 +1,6 @@
 package com.evanlin.cloud.video.client;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.evanlin.cloud.video.controller.Video;
@@ -21,10 +22,10 @@ public interface VideoSvcApi {
 	public static final String NAME_PARAMETER = "name";
 
 	@GET(VIDEO_SVC_PATH)
-	public List<Video> getVideoList();
+	public Collection<Video> getVideoList();
 	
 	@POST(VIDEO_SVC_PATH)
-	public boolean addVideo(@Body Video v);
+	public Void addVideo(@Body Video v);
 
 	@GET(VIDEO_DATA_PATH)
 	public Video getVideoDataByID(@Path(ID_PARAMETER) long id);
@@ -33,6 +34,6 @@ public interface VideoSvcApi {
 	public boolean setVideoData(@Path(ID_PARAMETER) long id, @Body Video videoData);
 
 	@GET(VIDEO_SEARCH_PATH)
-	public List<Video> findByName(@Query(NAME_PARAMETER) String name);
+	public Collection<Video> findByTitle(@Query(NAME_PARAMETER) String title);
 
 }
