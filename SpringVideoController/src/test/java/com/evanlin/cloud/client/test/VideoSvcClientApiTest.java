@@ -68,7 +68,6 @@ public class VideoSvcClientApiTest {
 		//verify updated latest one item
 		Collection<Video> videos2 = videoService.getVideoList();
 		long currentID = videos2.size();
-		video_updated.setId(currentID);
 		//videoService.setVideoData(currentID, video_updated);			
 		//Collection<Video> videos_update = videoService.getVideoList();
 		//assertTrue(videos_update.contains(video_updated));
