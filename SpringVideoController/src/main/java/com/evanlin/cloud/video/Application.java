@@ -14,10 +14,12 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.evanlin.cloud.video.SecurityConfig;
 import com.evanlin.cloud.video.json.HATEOSMapper;
 import com.evanlin.cloud.video.videoDB.NoDuplicateVideoDB;
 import com.evanlin.cloud.video.videoDB.videoDB;
@@ -38,9 +40,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // Any class in this package that is annotated with @Controller is going to be
 // automatically discovered and connected to the DispatcherServlet.
 @ComponentScan
-// Tell Spring to automatically inject any dependencies that are marked in
-// our classes with @Autowired
 @EnableAutoConfiguration
+@Import(SecurityConfig.class)
 public class Application extends RepositoryRestMvcConfiguration{
 
 	// Tell Spring to launch our app!

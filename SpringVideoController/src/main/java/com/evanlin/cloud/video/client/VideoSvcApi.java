@@ -22,6 +22,8 @@ public interface VideoSvcApi {
 	public static final String DATA_PARAMETER = "data";
 	public static final String ID_PARAMETER = "id";	
 	public static final String TITLE_PARAMETER = "title";
+	public static final String LOGIN_PATH = "/login";
+	public static final String LOGOUT_PATH = "/logout";
 	// The path to search videos by title
 	public static final String VIDEO_TITLE_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findByName";
 	public static final String VIDEO_ID_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findById";
