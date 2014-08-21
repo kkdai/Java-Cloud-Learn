@@ -4,6 +4,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
 import com.evanlin.cloud.video.client.VideoSvcApi;
@@ -11,6 +17,7 @@ import com.evanlin.cloud.video.controller.Video;
 
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
+import retrofit.client.ApacheClient;
 
 /**
  * 
@@ -36,14 +43,31 @@ import retrofit.RestAdapter.LogLevel;
  */
 public class VideoSvcClientApiTest {
 
-	private final String TEST_URL = "http://localhost:9000";
+	private final String TEST_URL = "https://localhost:8443";
 
 	private VideoSvcApi videoService = new RestAdapter.Builder()
+			.setClient(new ApacheClient(createUnsafeClient()))
 			.setEndpoint(TEST_URL)
 			.setLogLevel(LogLevel.FULL)
 			.build()
 			.create(VideoSvcApi.class);
 
+	
+	public static HttpClient createUnsafeClient() {
+		try {
+			SSLContextBuilder builder = new SSLContextBuilder();
+			builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+					builder.build());
+			CloseableHttpClient httpclient = HttpClients.custom()
+					.setSSLSocketFactory(sslsf).build();
+
+			return httpclient;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	@Test
 	public void testVideoAddAndList() throws Exception {
 		Video video = TestData.randomVideo();
@@ -58,7 +82,7 @@ public class VideoSvcClientApiTest {
 	
 	@Test
 	public void testVideoAddAndList2() throws Exception {
-		Video video_updated = TestData.randomVideo();
+		//Video video_updated = TestData.randomVideo();
 	
 		Collection<Video> videos = videoService.getVideoList();
 		if (videos.size() == 0) {
@@ -66,8 +90,8 @@ public class VideoSvcClientApiTest {
 		}
 		
 		//verify updated latest one item
-		Collection<Video> videos2 = videoService.getVideoList();
-		long currentID = videos2.size();
+		//Collection<Video> videos2 = videoService.getVideoList();
+		//long currentID = videos2.size();
 		//videoService.setVideoData(currentID, video_updated);			
 		//Collection<Video> videos_update = videoService.getVideoList();
 		//assertTrue(videos_update.contains(video_updated));
