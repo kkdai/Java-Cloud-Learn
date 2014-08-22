@@ -6,6 +6,8 @@ import java.util.List;
 import com.evanlin.cloud.video.controller.Video;
 
 import retrofit.http.Body;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.PATCH;
 import retrofit.http.POST;
@@ -24,10 +26,20 @@ public interface VideoSvcApi {
 	public static final String TITLE_PARAMETER = "title";
 	public static final String LOGIN_PATH = "/login";
 	public static final String LOGOUT_PATH = "/logout";
+	public static final String PASSWORD_PARAMETER = "password";
+	public static final String USERNAME_PARAMETER = "username";
+
 	// The path to search videos by title
 	public static final String VIDEO_TITLE_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findByName";
 	public static final String VIDEO_ID_SEARCH_PATH = VIDEO_SVC_PATH + "/search/findById";
 
+	@FormUrlEncoded
+	@POST(LOGIN_PATH)
+	public Void login(@Field(USERNAME_PARAMETER) String username,  @Field(PASSWORD_PARAMETER) String password);
+	
+	@POST(LOGOUT_PATH)
+	public Void logout();
+	
 	@GET(VIDEO_SVC_PATH)
 	public Collection<Video> getVideoList();
 	
