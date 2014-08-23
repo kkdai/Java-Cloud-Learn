@@ -72,7 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		// We force clients to authenticate before accessing ANY URLs 
 		// other than the login and lougout that we have configured above.
-		http.authorizeRequests().anyRequest().authenticated();
+		//http.authorizeRequests().anyRequest().authenticated();
+		http.authorizeRequests()
+        .antMatchers("/video/search/**").hasRole("RULE_ADMIN") // #6
+        .anyRequest().authenticated();
 	}
 	
 	
@@ -87,12 +90,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				// User 1 : kkdai is admin/user
 				.withUser("kkdai")
 				.password("1234")
-				.authorities("admin","user")
+				.roles("RULE_ADMIN","RULE_USER")
 				.and()
 				// User 2 : test is user
 				.withUser("test")
 				.password("1234")
-				.authorities("user");
+				.roles("RULE_USER");
 	}
 
 }

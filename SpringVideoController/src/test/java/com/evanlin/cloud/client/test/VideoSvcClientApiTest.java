@@ -81,6 +81,22 @@ public class VideoSvcClientApiTest {
 		assertTrue(videoLast.size()==1);		
 	}
 	
+	@Test
+	public void testAccountRoles() throws Exception {
+		Video video = TestData.randomVideo();
+		videoService.login("test", "1234");
+		videoService.addVideo(video);
+		Collection<Video> videos = videoService.getVideoList();
+		assertTrue(videos.contains(video));
+		
+		// Testing insert and get by ID.
+		try {
+			Collection<Video> videoLast = videoService.getVideoDataByID(videos.size());
+			fail("Not go here!! Because the roles is not match");
+		} catch(Exception e) {
+			//Work well because it will failed 
+		}
+	}
 	
 	@Test
 	public void testVideoAddAndList2() throws Exception {
