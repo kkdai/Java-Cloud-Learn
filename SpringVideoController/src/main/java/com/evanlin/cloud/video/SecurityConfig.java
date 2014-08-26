@@ -138,6 +138,7 @@ public class SecurityConfig {
 			http.authorizeRequests().antMatchers("/oauth/token").anonymous();
 			http.authorizeRequests().antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('read')");			
 			http.authorizeRequests().antMatchers("/**").access("#oauth2.hasScope('write')");
+			http.authorizeRequests().antMatchers("/video/search/**").hasRole("ADMIN").anyRequest().authenticated();
 		}
 	}
 

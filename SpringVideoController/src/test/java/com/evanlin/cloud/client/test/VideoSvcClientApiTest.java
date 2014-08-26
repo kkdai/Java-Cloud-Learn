@@ -1,28 +1,27 @@
 package com.evanlin.cloud.client.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.HttpStatus;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.hsqldb.error.Error;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
-
-import com.evanlin.cloud.video.client.VideoSvcApi;
-import com.evanlin.cloud.video.controller.Video;
 
 import retrofit.ErrorHandler;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 import retrofit.RestAdapter.LogLevel;
+import retrofit.RetrofitError;
 import retrofit.client.ApacheClient;
+
+import com.evanlin.cloud.video.client.SecuredRestBuilder;
+import com.evanlin.cloud.video.client.VideoSvcApi;
+import com.evanlin.cloud.video.controller.Video;
 
 
 public class VideoSvcClientApiTest {
@@ -43,14 +42,39 @@ public class VideoSvcClientApiTest {
 	}
 	
 	private final String TEST_URL = "https://localhost:8443";
+	private final String USERNAME = "kkdai";
+	private final String PASSWORD = "1234";
+	private final String CLIENT_ID = "mobile";
+	private final String READ_ONLY_CLIENT_ID = "mobileReader";
 
-	private VideoSvcApi videoService = new RestAdapter.Builder()
-			.setClient(new ApacheClient(createUnsafeClient()))
-			.setEndpoint(TEST_URL)
-			.setLogLevel(LogLevel.FULL)
-			.build()
-			.create(VideoSvcApi.class);
+	private VideoSvcApi videoService = new SecuredRestBuilder()
+	.setLoginEndpoint(TEST_URL + VideoSvcApi.TOKEN_PATH)
+	.setUsername(USERNAME)
+	.setPassword(PASSWORD)
+	.setClientId(CLIENT_ID)
+	.setClient(new ApacheClient(createUnsafeClient()))
+	.setEndpoint(TEST_URL).setLogLevel(LogLevel.FULL).build()
+	.create(VideoSvcApi.class);
 
+	private VideoSvcApi invalidClientVideoService = new SecuredRestBuilder()
+	.setLoginEndpoint(TEST_URL + VideoSvcApi.TOKEN_PATH)
+	.setUsername(UUID.randomUUID().toString())
+	.setPassword(UUID.randomUUID().toString())
+	.setClientId(UUID.randomUUID().toString())
+	.setClient(new ApacheClient(createUnsafeClient()))
+	.setEndpoint(TEST_URL).setLogLevel(LogLevel.FULL).build()
+	.create(VideoSvcApi.class);
+
+	private VideoSvcApi userClientVideoService = new SecuredRestBuilder()
+	.setLoginEndpoint(TEST_URL + VideoSvcApi.TOKEN_PATH)
+	.setUsername("test")
+	.setPassword("1234")
+	.setClientId(CLIENT_ID)
+	.setClient(new ApacheClient(createUnsafeClient()))
+	.setEndpoint(TEST_URL).setLogLevel(LogLevel.FULL).build()
+	.create(VideoSvcApi.class);
+
+	private Video video = TestData.randomVideo();
 	
 	public static HttpClient createUnsafeClient() {
 		try {
@@ -67,11 +91,32 @@ public class VideoSvcClientApiTest {
 		}
 	}
 	
-	
+	@Test
+	public void testSecuredVideoAddAndList() throws Exception {
+		// Add the video
+		videoService.addVideo(video);
+
+		// We should get back the video that we added above
+		Collection<Video> videos = videoService.getVideoList();
+		assertTrue(videos.contains(video));
+	}
+
+	@Test
+	public void testAccessDeniedWithIncorrectCredentials() throws Exception {
+
+		try {
+			// Add the video
+			invalidClientVideoService.addVideo(video);
+
+			fail("The server should have prevented the client from adding a video"
+					+ " because it presented invalid client/user credentials");
+		} catch (RetrofitError e) {
+			assert (e.getCause() instanceof RuntimeException);
+		}
+	}
+
 	@Test
 	public void testVideoAddAndList() throws Exception {
-		Video video = TestData.randomVideo();
-		videoService.login("kkdai", "1234");
 		videoService.addVideo(video);
 		Collection<Video> videos = videoService.getVideoList();
 		assertTrue(videos.contains(video));
@@ -83,15 +128,13 @@ public class VideoSvcClientApiTest {
 	
 	@Test
 	public void testAccountRoles() throws Exception {
-		Video video = TestData.randomVideo();
-		videoService.login("test", "1234");
 		videoService.addVideo(video);
-		Collection<Video> videos = videoService.getVideoList();
+		Collection<Video> videos = userClientVideoService.getVideoList();
 		assertTrue(videos.contains(video));
 		
 		// Testing insert and get by ID.
 		try {
-			Collection<Video> videoLast = videoService.getVideoDataByID(videos.size());
+			Collection<Video> videoLast = userClientVideoService.getVideoDataByID(videos.size());
 			fail("Not go here!! Because the roles is not match");
 		} catch(Exception e) {
 			//Work well because it will failed 
@@ -101,69 +144,9 @@ public class VideoSvcClientApiTest {
 	@Test
 	public void testVideoAddAndList2() throws Exception {
 		//Video video_updated = TestData.randomVideo();
-		videoService.login("kkdai", "1234");	
 		Collection<Video> videos = videoService.getVideoList();
 		if (videos.size() == 0) {
 			testVideoAddAndList();
 		}
-		
-		//verify updated latest one item
-		//Collection<Video> videos2 = videoService.getVideoList();
-		//long currentID = videos2.size();
-		//videoService.setVideoData(currentID, video_updated);			
-		//Collection<Video> videos_update = videoService.getVideoList();
-		//assertTrue(videos_update.contains(video_updated));
-	}
-
-	@Test
-	public void testSearchVideoByTitle() throws Exception {
-		videoService.login("kkdai", "1234");
-		Video video = TestData.randomVideo();		
-		videoService.addVideo(video);
-		Collection<Video> nameMatchedVideos = videoService.findByTitle(video.getName());
-		assertTrue(nameMatchedVideos.contains(video));
-	}
-
-	
-	@Test
-	public void testAddVideoWithoutLogin() throws Exception {
-		ErrorRecorder error_ret = new ErrorRecorder();
-
-		VideoSvcApi videoUnloginService = new RestAdapter.Builder()
-		.setClient(new ApacheClient(createUnsafeClient()))
-		.setEndpoint(TEST_URL)
-		.setLogLevel(LogLevel.FULL)
-		.setErrorHandler(error_ret)
-		.build()
-		.create(VideoSvcApi.class);
-		
-		try {
-			Video v = TestData.randomVideo();
-			videoUnloginService.addVideo(v);
-			fail("Yikes, the security setup is horribly broken and didn't require the user to login!!");
-		}
-		catch (Exception e) {
-			assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, error_ret.getError().getResponse().getStatus());
-			
-			// Fail and try to login
-			videoService.login("kkdai", "1234");
-			Video video = TestData.randomVideo();		
-			videoService.addVideo(video);
-			Collection<Video> nameMatchedVideos = videoService.findByTitle(video.getName());
-			assertTrue(nameMatchedVideos.contains(video));
-		}
-	}
-	
-	@Test
-	public void testLogout() throws Exception {
-		videoService.login("kkdai", "1234");
-		videoService.addVideo(TestData.randomVideo());
-		videoService.logout();
-		try {
-			videoService.addVideo(TestData.randomVideo());
-			fail("Not go here!!");
-		} catch (Exception e) {
-			//Logout worked.
-		}		
 	}
 }
