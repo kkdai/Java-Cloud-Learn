@@ -1,5 +1,6 @@
 package com.evanlin.cloud.video;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -7,8 +8,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.connector.Connector;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -47,70 +55,78 @@ public class SecurityConfig {
 	@Configuration
 	@EnableWebSecurity
 	protected static class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-		private static final AuthenticationSuccessHandler NO_REDIRECT_SUCCESS_HANDLER = new AuthenticationSuccessHandler() {
-			@Override
-			public void onAuthenticationSuccess(HttpServletRequest request,
-					HttpServletResponse response, Authentication authentication)
-					throws IOException, ServletException {
-				response.setStatus(HttpStatus.SC_OK);
-			}
-		};
+		@Autowired
+		private UserDetailsService userDetailsService;
 		
-		private static final LogoutSuccessHandler JSON_LOGOUT_SUCCESS_HANDLER = new LogoutSuccessHandler() {
-			@Override
-			public void onLogoutSuccess(HttpServletRequest request,
-					HttpServletResponse response, Authentication authentication)
-					throws IOException, ServletException {
-				response.setStatus(HttpStatus.SC_OK);
-				response.setContentType("application/json");
-				response.getWriter().write("{}");
-			}
-		};
-		
-		@Override
-		protected void configure(final HttpSecurity http) throws Exception {
-			http.csrf().disable();
-			http.requestCache().requestCache(new NullRequestCache());
-			// clients login configuration.
-			http.formLogin()
-				.loginProcessingUrl(VideoSvcApi.LOGIN_PATH)
-				.successHandler(NO_REDIRECT_SUCCESS_HANDLER) //no redirect after login
-				.permitAll(); // Allow everyone to access the login URL
-			
-			// Make sure that clients can logout too!!
-			http.logout()
-				.logoutUrl(VideoSvcApi.LOGOUT_PATH)			//no redirect after logout
-				.logoutSuccessHandler(JSON_LOGOUT_SUCCESS_HANDLER)
-				.permitAll();
-			
-			
-			// We force clients to authenticate before accessing ANY URLs
-			// but need ADMIN for search method
-			// other than the login and logout that we have configured above.			
-			http.authorizeRequests()
-	        .antMatchers("/video/search/**").hasRole("ADMIN") 
-	        .anyRequest().authenticated();
-		}
-		
-		
-		// Account setting
 		@Autowired
 		protected void registerAuthentication(
 				final AuthenticationManagerBuilder auth) throws Exception {
-			
-			// This example creates a simple in-memory UserDetailService that
-			// is provided by Spring
-			auth.inMemoryAuthentication()
-					// User 1 : kkdai is admin/user
-					.withUser("kkdai")
-					.password("1234")
-					.roles("ADMIN","USER")
-					.and()
-					// User 2 : test is user
-					.withUser("test")
-					.password("1234")
-					.roles("USER");
+			auth.userDetailsService(userDetailsService);
 		}
+//		private static final AuthenticationSuccessHandler NO_REDIRECT_SUCCESS_HANDLER = new AuthenticationSuccessHandler() {
+//			@Override
+//			public void onAuthenticationSuccess(HttpServletRequest request,
+//					HttpServletResponse response, Authentication authentication)
+//					throws IOException, ServletException {
+//				response.setStatus(HttpStatus.SC_OK);
+//			}
+//		};
+//		
+//		private static final LogoutSuccessHandler JSON_LOGOUT_SUCCESS_HANDLER = new LogoutSuccessHandler() {
+//			@Override
+//			public void onLogoutSuccess(HttpServletRequest request,
+//					HttpServletResponse response, Authentication authentication)
+//					throws IOException, ServletException {
+//				response.setStatus(HttpStatus.SC_OK);
+//				response.setContentType("application/json");
+//				response.getWriter().write("{}");
+//			}
+//		};
+//		
+//		@Override
+//		protected void configure(final HttpSecurity http) throws Exception {
+//			http.csrf().disable();
+//			http.requestCache().requestCache(new NullRequestCache());
+//			// clients login configuration.
+//			http.formLogin()
+//				.loginProcessingUrl(VideoSvcApi.LOGIN_PATH)
+//				.successHandler(NO_REDIRECT_SUCCESS_HANDLER) //no redirect after login
+//				.permitAll(); // Allow everyone to access the login URL
+//			
+//			// Make sure that clients can logout too!!
+//			http.logout()
+//				.logoutUrl(VideoSvcApi.LOGOUT_PATH)			//no redirect after logout
+//				.logoutSuccessHandler(JSON_LOGOUT_SUCCESS_HANDLER)
+//				.permitAll();
+//			
+//			
+//			// We force clients to authenticate before accessing ANY URLs
+//			// but need ADMIN for search method
+//			// other than the login and logout that we have configured above.			
+//			http.authorizeRequests()
+//	        .antMatchers("/video/search/**").hasRole("ADMIN") 
+//	        .anyRequest().authenticated();
+//		}
+//		
+//		
+//		// Account setting
+//		@Autowired
+//		protected void registerAuthentication(
+//				final AuthenticationManagerBuilder auth) throws Exception {
+//			
+//			// This example creates a simple in-memory UserDetailService that
+//			// is provided by Spring
+//			auth.inMemoryAuthentication()
+//					// User 1 : kkdai is admin/user
+//					.withUser("kkdai")
+//					.password("1234")
+//					.roles("ADMIN","USER")
+//					.and()
+//					// User 2 : test is user
+//					.withUser("test")
+//					.password("1234")
+//					.roles("USER");
+//		}
 	}
 
 	@Configuration
@@ -190,5 +206,49 @@ public class SecurityConfig {
 				throws Exception {
 			clients.withClientDetails(clientDetailsService());
 		}
+	}
+	
+	// Add Https support to Tomcat
+	@Bean
+	EmbeddedServletContainerCustomizer containerCustomizer(
+			@Value("${keystore.file}") String keystoreFile,
+			@Value("${keystore.pass}") final String keystorePass)
+			throws Exception {
+
+		
+		// This is boiler plate code to setup https on embedded Tomcat
+		// with Spring Boot:
+		
+		final String absoluteKeystoreFile = new File(keystoreFile)
+				.getAbsolutePath();
+
+		return new EmbeddedServletContainerCustomizer() {
+			@Override
+			public void customize(ConfigurableEmbeddedServletContainer container) {
+				TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
+				tomcat.addConnectorCustomizers(new TomcatConnectorCustomizer() {
+
+					@Override
+					public void customize(Connector connector) {
+						connector.setPort(8443);
+						connector.setSecure(true);
+						connector.setScheme("https");
+
+						Http11NioProtocol proto = (Http11NioProtocol) connector
+								.getProtocolHandler();
+						proto.setSSLEnabled(true);
+						
+						// If you update the keystore, you need to change
+						// these parameters to match the keystore that you generate
+						proto.setKeystoreFile(absoluteKeystoreFile);
+						proto.setKeystorePass(keystorePass);
+						proto.setKeystoreType("JKS");
+						proto.setKeyAlias("tomcat");
+
+					}
+				});
+			}
+
+		};
 	}
 }

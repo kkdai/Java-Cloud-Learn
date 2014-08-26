@@ -58,49 +58,4 @@ public class Application extends RepositoryRestMvcConfiguration{
 	public ObjectMapper halObjectMapper(){
 		return new HATEOSMapper();
 	}
-
-	
-	// Add Https support to Tomcat
-	@Bean
-	EmbeddedServletContainerCustomizer containerCustomizer(
-			@Value("${keystore.file}") String keystoreFile,
-			@Value("${keystore.pass}") final String keystorePass)
-			throws Exception {
-
-		
-		// This is boiler plate code to setup https on embedded Tomcat
-		// with Spring Boot:
-		
-		final String absoluteKeystoreFile = new File(keystoreFile)
-				.getAbsolutePath();
-
-		return new EmbeddedServletContainerCustomizer() {
-			@Override
-			public void customize(ConfigurableEmbeddedServletContainer container) {
-				TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
-				tomcat.addConnectorCustomizers(new TomcatConnectorCustomizer() {
-
-					@Override
-					public void customize(Connector connector) {
-						connector.setPort(8443);
-						connector.setSecure(true);
-						connector.setScheme("https");
-
-						Http11NioProtocol proto = (Http11NioProtocol) connector
-								.getProtocolHandler();
-						proto.setSSLEnabled(true);
-						
-						// If you update the keystore, you need to change
-						// these parameters to match the keystore that you generate
-						proto.setKeystoreFile(absoluteKeystoreFile);
-						proto.setKeystorePass(keystorePass);
-						proto.setKeystoreType("JKS");
-						proto.setKeyAlias("tomcat");
-
-					}
-				});
-			}
-
-		};
-	}
 }
