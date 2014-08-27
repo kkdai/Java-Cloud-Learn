@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.evanlin.cloud.video.videoDB.videoDB;
 
+// Complete assign2 control basic architecture base on this class.
+
 // Tell Spring that this class is a Controller that should 
 // handle certain HTTP requests for the DispatcherServlet
 //@Controller
