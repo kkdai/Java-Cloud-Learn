@@ -14,7 +14,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 
-import retrofit.ErrorHandler;
 import retrofit.RestAdapter.LogLevel;
 import retrofit.RetrofitError;
 import retrofit.client.ApacheClient;
@@ -26,20 +25,20 @@ import com.evanlin.cloud.video.controller.Video;
 
 public class VideoSvcClientApiTest {
 
-	private class ErrorRecorder implements ErrorHandler {
-
-		private RetrofitError error;
-
-		@Override
-		public Throwable handleError(RetrofitError cause) {
-			error = cause;
-			return error.getCause();
-		}
-
-		public RetrofitError getError() {
-			return error;
-		}
-	}
+//	private class ErrorRecorder implements ErrorHandler {
+//
+//		private RetrofitError error;
+//
+//		@Override
+//		public Throwable handleError(RetrofitError cause) {
+//			error = cause;
+//			return error.getCause();
+//		}
+//
+//		public RetrofitError getError() {
+//			return error;
+//		}
+//	}
 	
 	private final String TEST_URL = "https://localhost:8443";
 	private final String USERNAME = "kkdai";
@@ -70,6 +69,15 @@ public class VideoSvcClientApiTest {
 	.setUsername("test")
 	.setPassword("1234")
 	.setClientId(CLIENT_ID)
+	.setClient(new ApacheClient(createUnsafeClient()))
+	.setEndpoint(TEST_URL).setLogLevel(LogLevel.FULL).build()
+	.create(VideoSvcApi.class);
+
+	private VideoSvcApi readOnlyVideoService = new SecuredRestBuilder()
+	.setLoginEndpoint(TEST_URL + VideoSvcApi.TOKEN_PATH)
+	.setUsername(USERNAME)
+	.setPassword(PASSWORD)
+	.setClientId(READ_ONLY_CLIENT_ID)
 	.setClient(new ApacheClient(createUnsafeClient()))
 	.setEndpoint(TEST_URL).setLogLevel(LogLevel.FULL).build()
 	.create(VideoSvcApi.class);
@@ -127,14 +135,14 @@ public class VideoSvcClientApiTest {
 	}
 	
 	@Test
-	public void testAccountRoles() throws Exception {
-		videoService.addVideo(video);
+	public void testClientPrivillege() throws Exception {
+		userClientVideoService.addVideo(video);
 		Collection<Video> videos = userClientVideoService.getVideoList();
 		assertTrue(videos.contains(video));
 		
 		// Testing insert and get by ID.
 		try {
-			Collection<Video> videoLast = userClientVideoService.getVideoDataByID(videos.size());
+			readOnlyVideoService.addVideo(video);
 			fail("Not go here!! Because the roles is not match");
 		} catch(Exception e) {
 			//Work well because it will failed 
