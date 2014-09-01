@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TestData {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	public static Video randomVideo() {
-		String id = UUID.randomUUID().toString();
-		String title = "Video-"+id;
-		String url = "http://coursera.org/some/video-"+id;
+		String title_id = UUID.randomUUID().toString();
+		String title = "Video-"+title_id;
+		String url = "http://coursera.org/some/video-"+title_id;
 		long duration = 60 * (int)Math.rint(Math.random() * 60) * 1000; // random time up to 1hr
 		
 		Date date = new Date();
