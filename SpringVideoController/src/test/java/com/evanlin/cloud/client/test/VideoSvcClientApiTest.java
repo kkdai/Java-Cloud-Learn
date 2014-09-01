@@ -124,14 +124,11 @@ public class VideoSvcClientApiTest {
 	}
 
 	@Test
-	public void testVideoAddAndList() throws Exception {
-		videoService.addVideo(video);
+	public void testGetVideoByID() throws Exception {
 		Collection<Video> videos = videoService.getVideoList();
-		assertTrue(videos.contains(video));
-		
 		// Testing insert and get by ID.
-		Collection<Video> videoLast = videoService.getVideoDataByID(videos.size());
-		assertTrue(videoLast.size()==1);		
+		Video videoLast = videoService.getVideoDataByID(videos.size());
+		assertTrue(videos.contains(videoLast));
 	}
 	
 	@Test
@@ -146,15 +143,6 @@ public class VideoSvcClientApiTest {
 			fail("Not go here!! Because the roles is not match");
 		} catch(Exception e) {
 			//Work well because it will failed 
-		}
-	}
-	
-	@Test
-	public void testVideoAddAndList2() throws Exception {
-		//Video video_updated = TestData.randomVideo();
-		Collection<Video> videos = videoService.getVideoList();
-		if (videos.size() == 0) {
-			testVideoAddAndList();
 		}
 	}
 }

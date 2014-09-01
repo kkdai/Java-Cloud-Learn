@@ -15,5 +15,4 @@ import com.evanlin.cloud.video.controller.Video;
 public interface VideoRepository extends CrudRepository<Video, Long>{
 	public Collection<Video> findByName(@Param(VideoSvcApi.TITLE_PARAMETER) String title);
 	public Collection<Video> findById(@Param("id") long id);
-	//Principal p, p.getName(); could identify login user_name
 }

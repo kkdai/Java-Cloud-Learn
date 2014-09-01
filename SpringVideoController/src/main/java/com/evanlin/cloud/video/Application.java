@@ -23,12 +23,12 @@ import com.evanlin.cloud.video.SecurityConfig;
 import com.evanlin.cloud.video.json.HATEOSMapper;
 import com.evanlin.cloud.video.videoDB.NoDuplicateVideoDB;
 import com.evanlin.cloud.video.videoDB.videoDB;
-import com.evanlin.cloud.video.videoDB.VideoRepository;
+//import com.evanlin.cloud.video.videoDB.VideoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 // Tell Spring that this object represents a Configuration for the
 // application
-@EnableJpaRepositories(basePackageClasses = VideoRepository.class)
+//@EnableJpaRepositories(basePackageClasses = VideoRepository.class)
 // Tell Spring to turn on WebMVC (e.g., it should enable the DispatcherServlet
 // so that requests can be routed to our Controllers)
 @EnableWebMvc
