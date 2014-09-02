@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -26,6 +27,7 @@ import com.evanlin.cloud.video.videoDB.NoDuplicateVideoDB;
 import com.evanlin.cloud.video.videoDB.videoDB;
 //import com.evanlin.cloud.video.videoDB.VideoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.Mongo;
 
 // Tell Spring that this object represents a Configuration for the
 // application
@@ -38,7 +40,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 
 @EnableMongoRepositories
+class ApplicationConfig extends AbstractMongoConfiguration {
 
+	  @Override
+	  protected String getDatabaseName() {
+	    return "moocs";
+	  }
+
+	  @Override
+	  public Mongo mongo() throws Exception {
+	    return new Mongo();
+	  }
+
+	  @Override
+	  protected String getMappingBasePackage() {
+	    return "com.oreilly.springdata.mongodb";
+	  }
+}
 // Tell Spring to go and scan our controller package (and all sub packages) to
 // find any Controllers or other components that are part of our applciation.
 // Any class in this package that is annotated with @Controller is going to be
