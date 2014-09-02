@@ -41,9 +41,9 @@ public interface VideoSvcApi {
 	public Void addVideo(@Body Video v);
 
 	@GET(VIDEO_ID_SEARCH_PATH)
-	public Video getVideoDataByID(@Query(ID_PARAMETER) long id);
+	public Collection<Video> getVideoDataByID(@Query(ID_PARAMETER) String id);
 
-	@GET(VIDEO_SVC_PATH + "/find")
+	@GET(VIDEO_TITLE_SEARCH_PATH)
 	public Collection<Video> findByTitle(@Query(TITLE_PARAMETER) String title);
 
 	@PATCH(VIDEO_PATCH_PATH)

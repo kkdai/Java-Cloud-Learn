@@ -124,11 +124,13 @@ public class VideoSvcClientApiTest {
 	}
 
 	@Test
-	public void testGetVideoByID() throws Exception {
+	public void testGetVideoByTitle() throws Exception {
+		Video video_add = TestData.randomVideo();
+		userClientVideoService.addVideo(video_add);
 		Collection<Video> videos = videoService.getVideoList();
 		// Testing insert and get by ID.
-		Video videoLast = videoService.getVideoDataByID(videos.size());
-		assertTrue(videos.contains(videoLast));
+		Collection<Video> video_list = videoService.findByTitle(video_add.getName());
+		assertTrue(video_list.size()==1);
 	}
 	
 	@Test
